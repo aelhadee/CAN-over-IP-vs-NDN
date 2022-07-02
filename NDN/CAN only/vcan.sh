@@ -1,4 +1,5 @@
 #! /bin/bash
+nfd-start
 modeprob vcan
 ip link add dev vcan0 type vcan
 ip link add dev vcan1 type vcan
