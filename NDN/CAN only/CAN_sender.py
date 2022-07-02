@@ -31,6 +31,7 @@ logging.basicConfig(format='[{asctime}]{levelname}:{message}',
 app = NDNApp()
 
 
+
 @app.route('/trailer/ECU/CAN')
 def on_interest(name: FormalName, param: InterestParam, _app_param: Optional[BinaryStr]):
     # print(f'>> I: {Name.to_str(name)}, {param}')
