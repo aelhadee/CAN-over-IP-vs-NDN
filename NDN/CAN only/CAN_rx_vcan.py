@@ -24,7 +24,7 @@ from ndn.types import InterestNack, InterestTimeout, InterestCanceled, Validatio
 from ndn.encoding import Name, Component, InterestParam
 import pandas as pd
 import matplotlib.pyplot as plt
-
+import can
 global start_time, start_time_data_received, dt_data_received, MB
 start_time = time.time()
 start_time_data_received = time.time()
@@ -37,19 +37,21 @@ logging.basicConfig(format='[{asctime}]{levelname}:{message}',
 
 app = NDNApp()
 
+bus1 = can.Bus(channel='vcan0', interface='socketcan')  # pip3 install python-can
+bus2_fd = can.Bus(channel='vcan1', interface='socketcan')
 
+
+# bus3_fd = can.Bus(channel='vcan2', interface='socketcan', fd= True)
 async def main():
     global start_time, start_time_data_received, dt_data_received
     MB = 0
-    bus1 = can.Bus(channel='vcan0', interface='socketcan')  # pip3 install python-can
-    bus2_fd = can.Bus(channel='vcan1', interface='socketcan')
-    # bus3_fd = can.Bus(channel='vcan2', interface='socketcan', fd= True)
+
     while True:
         try:
             timestamp = ndn.utils.timestamp()
             name = Name.from_str('/trailer/ECU/CAN') + [Component.from_timestamp(timestamp)]
             data_name, meta_info, content = await app.express_interest(
-                name, must_be_fresh=True, can_be_prefix=False, lifetime=600)
+                name, must_be_fresh=True, can_be_prefix=False, lifetime=6000)
             CAN_bytes = bytes(content)
 
             # CAN msg 1 - Bus 1
@@ -75,9 +77,9 @@ async def main():
 
             # CAN FD msg 2 - Bus 2
             msg2_fd_data = CAN_bytes[88:152]
-            msg3 = can.Message(arbitration_id=0xC1, dlc=64, is_extended_id=False, is_fd=True,
-                               data=msg1_fd_data)
-            bus2_fd.send(msg3)
+            msg2_fd = can.Message(arbitration_id=0xC2, dlc=64, is_extended_id=False, is_fd=True,
+                               data=msg2_fd_data)
+            bus2_fd.send(msg2_fd)
 
             MB += len(content)
 
