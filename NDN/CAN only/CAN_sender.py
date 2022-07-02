@@ -29,13 +29,13 @@ logging.basicConfig(format='[{asctime}]{levelname}:{message}',
 
 
 app = NDNApp()
-
-
+# 3 CAN messages
+# 2 CAN FD messages
 
 @app.route('/trailer/ECU/CAN')
 def on_interest(name: FormalName, param: InterestParam, _app_param: Optional[BinaryStr]):
     # print(f'>> I: {Name.to_str(name)}, {param}')
-    content = os.urandom(32)
+    content = os.urandom(152)
     app.put_data(name, content=content, freshness_period=10000)
     time.sleep(10 / 1000)
 

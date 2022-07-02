@@ -41,7 +41,7 @@ app = NDNApp()
 async def main():
     global start_time, start_time_data_received, dt_data_received
     MB = 0
-    bus1_fd = can.Bus(channel='vcan0', interface='socketcan')  # pip3 install python-can
+    bus1 = can.Bus(channel='vcan0', interface='socketcan')  # pip3 install python-can
     bus2_fd = can.Bus(channel='vcan1', interface='socketcan')
     # bus3_fd = can.Bus(channel='vcan2', interface='socketcan', fd= True)
     while True:
@@ -49,65 +49,37 @@ async def main():
             timestamp = ndn.utils.timestamp()
             name = Name.from_str('/trailer/ECU/CAN') + [Component.from_timestamp(timestamp)]
             data_name, meta_info, content = await app.express_interest(
-                name, must_be_fresh=True, can_be_prefix=False, lifetime=6000)
+                name, must_be_fresh=True, can_be_prefix=False, lifetime=600)
             CAN_bytes = bytes(content)
 
-            msg1_fd1_data = CAN_bytes[0:8]
-            msg1_fd1 = can.Message(arbitration_id=0xF1, dlc=8, is_extended_id=False, is_fd=False,
-                                   data=msg1_fd1_data)
-            bus1_fd.send(msg1_fd1)
-            # CAN FD MSG 2 - Bus 1
-            msg2_fd1_data = CAN_bytes[8:16]
-            msg2_fd1 = can.Message(arbitration_id=0xF2, dlc=8, is_extended_id=False, is_fd=False,
-                                   data=msg2_fd1_data)
-            bus1_fd.send(msg2_fd1)
-            # CAN FD MSG 3 - Bus 1
-            #                    msg3_fd1_data = []
-            #                    for e in range(141, 205):
-            #                        msg3_fd1_data.append(decrypted_CAN_bytes[e])
-            #                    msg3_fd1 = can.Message(arbitration_id=0xF3, dlc=64, is_extended_id=False, is_fd=True,
-            #                                           data=msg3_fd1_data)
-            #                    bus1_fd.send(msg3_fd1)
-            # CAN FD MSG 1 - Bus 2
-            msg1_fd2_data = CAN_bytes[16:24]
-            # for e in range(16,24 ):
-            #     msg1_fd2_data.append(decrypted_CAN_bytes[e])
-            msg1_fd2 = can.Message(arbitration_id=0xC1, dlc=8, is_extended_id=False, is_fd=False,
-                                   data=msg1_fd2_data)
-            bus2_fd.send(msg1_fd2)
-            # CAN FD MSG 2 - Bus 2
-            msg2_fd2_data = CAN_bytes[24:32]
-            # for e in range(24, 32):
-            #     msg2_fd2_data.append(decrypted_CAN_bytes[e])
-            msg2_fd2 = can.Message(arbitration_id=0xC2, dlc=8, is_extended_id=False, is_fd=False,
-                                   data=msg2_fd2_data)
-            bus2_fd.send(msg2_fd2)
-            # CAN FD AND CAN - Bus 3
-            # CAN FD MSG 1 - bus 3
-            #                   msg1_fd3_data = []
-            #                   for e in range(348, 412):
-            #                       msg1_fd3_data.append(decrypted_CAN_bytes[e])
-            #                   msg1_fd3 = can.Message(arbitration_id=0xC3, dlc=64, is_extended_id=False, is_fd=True,
-            #                                          data=msg1_fd3_data)
-            #                 bus3_fd.send(msg1_fd3)
-            # CAN MSG 2 - bus 3
-            #                  msg2_fd3_data = []
-            #                  for e in range(417, 425):
-            #                      msg2_fd3_data.append(decrypted_CAN_bytes[e])
-            #                  msg2_fd3 = can.Message(arbitration_id=0xA1, dlc=8, is_extended_id=False, is_fd=False,
-            #                                         data=msg2_fd3_data)
-            #                  bus3_fd.send(msg2_fd3)
-            # CAN MSG 3 - bus 3
-            #                    msg3_fd3_data = []
-            #                    for e in range(450, 458):
-            #                        msg3_fd3_data.append(decrypted_CAN_bytes[e])
-            #                    msg3_fd3 = can.Message(arbitration_id=0xA2, dlc=8, is_extended_id=False, is_fd=False,
-            #                                           data=msg3_fd3_data)
-            #                    bus3_fd.send(msg3_fd3)
-            #                    time.sleep(3/1000)
-            # print(bytes(content))
-            MB += len(content)
+            # CAN msg 1 - Bus 1
+            msg1_data = CAN_bytes[0:8]
+            msg1 = can.Message(arbitration_id=0xF1, dlc=8, is_extended_id=False, is_fd=False,
+                               data=msg1_data)
+            bus1.send(msg1)
+            # CAN MSG 2 - Bus 1
+            msg2_data = CAN_bytes[8:16]
+            msg2 = can.Message(arbitration_id=0xF2, dlc=8, is_extended_id=False, is_fd=False,
+                               data=msg2_data)
+            bus1.send(msg2)
+            # CAN MSG 3 - Bus 1
+            msg3_data = CAN_bytes[16:24]
+            msg3 = can.Message(arbitration_id=0xF3, dlc=8, is_extended_id=False, is_fd=False,
+                               data=msg3_data)
+            bus1.send(msg3)
+            # CAN FD msg 1 - Bus 2
+            msg1_fd_data = CAN_bytes[24:88]
+            msg1_fd = can.Message(arbitration_id=0xC1, dlc=64, is_extended_id=False, is_fd=True,
+                                  data=msg1_fd_data)
+            bus2_fd.send(msg1_fd)
 
+            # CAN FD msg 2 - Bus 2
+            msg2_fd_data = CAN_bytes[88:152]
+            msg3 = can.Message(arbitration_id=0xC1, dlc=64, is_extended_id=False, is_fd=True,
+                               data=msg1_fd_data)
+            bus2_fd.send(msg3)
+
+            MB += len(content)
 
         except InterestNack as e:
             print(f'Nacked with reason={e.reason}')
