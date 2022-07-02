@@ -25,6 +25,7 @@ from ndn.encoding import Name, Component, InterestParam
 import pandas as pd
 import matplotlib.pyplot as plt
 import can
+
 global start_time, start_time_data_received, dt_data_received, MB
 start_time = time.time()
 start_time_data_received = time.time()
@@ -69,17 +70,17 @@ async def main():
             msg3 = can.Message(arbitration_id=0xF3, dlc=8, is_extended_id=False, is_fd=False,
                                data=msg3_data)
             bus1.send(msg3)
-            # CAN FD msg 1 - Bus 2
-            msg1_fd_data = CAN_bytes[24:88]
-            msg1_fd = can.Message(arbitration_id=0xC1, dlc=64, is_extended_id=False, is_fd=True,
-                                  data=msg1_fd_data)
-            bus2_fd.send(msg1_fd)
-
-            # CAN FD msg 2 - Bus 2
-            msg2_fd_data = CAN_bytes[88:152]
-            msg2_fd = can.Message(arbitration_id=0xC2, dlc=64, is_extended_id=False, is_fd=True,
-                               data=msg2_fd_data)
-            bus2_fd.send(msg2_fd)
+            # # CAN FD msg 1 - Bus 2
+            # msg1_fd_data = CAN_bytes[24:88]
+            # msg1_fd = can.Message(arbitration_id=0xC1, dlc=60, is_extended_id=False, is_fd=True,
+            #                       data=msg1_fd_data)
+            # bus2_fd.send(msg1_fd)
+            #
+            # # CAN FD msg 2 - Bus 2
+            # msg2_fd_data = CAN_bytes[88:152]
+            # msg2_fd = can.Message(arbitration_id=0xC2, dlc=64, is_extended_id=False, is_fd=True,
+            #                       data=msg2_fd_data)
+            # bus2_fd.send(msg2_fd)
 
             MB += len(content)
 
