@@ -24,9 +24,8 @@ s.bind(address)
 print('listening at', address)
 # secret_key = b'\x95S)\x93\x93)\xa0\xae\xf8\x9fuY\xec\xec\xdf\xd4]<\xb2\x00Y\xcdr}\x17U/\x1e\xb1\xe62\xac'
 # iv = b'\xa7S\x94{\x8c\xdf\x81E\xc5i}j\xa8\r~'
-CAN_bytes = []
 
-# CANFD BUS - 8 Mbits/s
+# CAN
 bus1 = can.Bus(channel='vcan0', interface='socketcan')  # pip3 install python-can
 bus2_fd = can.Bus(channel='vcan0', interface='socketcan')
 start_time = time.time()
@@ -71,7 +70,7 @@ while True:
     dt_data_received.append((time.time() - start_time_data_received) * 1000)
     print((time.time() - start_time_data_received)*1e6, 'nano seconds')
     start_time_data_received = time.time()
-    if (time.time() - start_time) >= (10 * 60):
+    if (time.time() - start_time) >= (1 * 60):
         print(dt_data_received)
         logfilename_tcp_rx = "CAN_rx_dt_" + str(time.time_ns()) + ".log"
         with open(logfilename_tcp_rx, "a") as log1:
