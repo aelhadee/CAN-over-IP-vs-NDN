@@ -11,10 +11,11 @@ from random import randrange
 host = '127.0.0.1'
 port = 9990
 address = (host, port)
-s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+# s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
 # s.connect((host, port))
 s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-
+s.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, 2)
 msgs_matrix = []
 # secret_key = b'\x95S)\x93\x93)\xa0\xae\xf8\x9fuY\xec\xec\xdf\xd4]<\xb2\x00Y\xcdr}\x17U/\x1e\xb1\xe62\xac'
 # iv = b'\xa7S\x94{\x8c\xdf\x81E\xc5i}j\xa8\r~'
@@ -47,4 +48,4 @@ while True:
         break
 
     msgs_matrix = []  # to avoid appending old data
-    # time.sleep(15 / 1000)
+    time.sleep(15 / 1000)
