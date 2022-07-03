@@ -77,10 +77,11 @@ async def main():
             # bus2_fd.send(msg1_fd)
             #
             # # CAN FD msg 2 - Bus 2
-            # msg2_fd_data = CAN_bytes[88:152]
-            # msg2_fd = can.Message(arbitration_id=0xC2, dlc=64, is_extended_id=False, is_fd=True,
-            #                       data=msg2_fd_data)
-            # bus2_fd.send(msg2_fd)
+            msg2_fd_data = CAN_bytes[88:88+10]
+            msg2_fd = can.Message(arbitration_id=0xC2, #dlc=64,
+                                  is_extended_id=False, is_fd=False,
+                                  data=msg2_fd_data)
+            bus2_fd.send(msg2_fd)
 
             MB += len(content)
 
