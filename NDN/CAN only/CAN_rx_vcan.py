@@ -39,7 +39,7 @@ logging.basicConfig(format='[{asctime}]{levelname}:{message}',
 app = NDNApp()
 
 bus1 = can.Bus(channel='vcan0', interface='socketcan')  # pip3 install python-can
-bus2_fd = can.Bus(channel='vcan1', interface='socketcan')
+bus2_fd = can.Bus(channel='vcan0', interface='socketcan')
 
 
 # bus3_fd = can.Bus(channel='vcan2', interface='socketcan', fd= True)
@@ -77,11 +77,19 @@ async def main():
             # bus2_fd.send(msg1_fd)
             #
             # # CAN FD msg 2 - Bus 2
+<<<<<<< HEAD
             msg2_fd_data = CAN_bytes[88:88+10]
             msg2_fd = can.Message(arbitration_id=0xC2, #dlc=64,
                                   is_extended_id=False, is_fd=False,
                                   data=msg2_fd_data)
             bus2_fd.send(msg2_fd)
+=======
+            # msg2_fd_data = CAN_bytes[88:88+9]
+            # msg2_fd = can.Message(arbitration_id=0xC2, #dlc=64,
+            #                       is_extended_id=True, #is_fd=False,
+            #                       data=msg2_fd_data)
+            # bus2_fd.send(msg2_fd)
+>>>>>>> c74461d79b83257087b74e85493dd51d4eaf0afb
 
             MB += len(content)
 
@@ -116,10 +124,10 @@ async def main():
             plt.savefig("CAN_dt_data_tx_box_" + str(time.time_ns()) + ".png")
             print("Data RX Ended...going to sleep")
             dt_data_received_pd = pd.DataFrame(dt_data_received[1:])
-            logfilename_lidar_rx_summ = "Lidar_rx_dt_" + str(time.time_ns()) + ".log"
-            with open(logfilename_lidar_rx_summ, "a") as log2:
+            logfilename_CAN_rx_summ = "CAN_rx_dt_summary" + str(time.time_ns()) + ".log"
+            with open(logfilename_CAN_rx_summ, "a") as log2:
                 log2.write("CAN_RX_dt_summary" + "\n")
-                log2.write(str(dt_data_received_pd) + "\n")
+                log2.write(str(dt_data_received_pd.describe()) + "\n")
                 log2.close()
             print(dt_data_received_pd.describe())
             print(MB, 'bytes')
@@ -130,3 +138,4 @@ async def main():
 
 if __name__ == '__main__':
     app.run_forever(after_start=main())
+
