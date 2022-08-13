@@ -54,18 +54,18 @@ while True:
     msg3 = can.Message(arbitration_id=0xF3, dlc=8, is_extended_id=False, is_fd=False,
                        data=msg3_data)
     bus1.send(msg3)
-    # # CAN FD msg 1 - Bus 2
-    # msg1_fd_data = CAN_bytes[24:88]
-    # msg1_fd = can.Message(arbitration_id=0xC1, dlc=60, is_extended_id=False, is_fd=True,
-    #                       data=msg1_fd_data)
-    # bus2_fd.send(msg1_fd)
-    #
-    # # CAN FD msg 2 - Bus 2
-    # msg2_fd_data = CAN_bytes[88:88+9]
-    # msg2_fd = can.Message(arbitration_id=0xC2, #dlc=64,
-    #                       is_extended_id=True, #is_fd=False,
-    #                       data=msg2_fd_data)
-    # bus2_fd.send(msg2_fd)
+    # CAN FD msg 1 - Bus 2
+    msg1_fd_data = CAN_bytes[24:88]
+    msg1_fd = can.Message(arbitration_id=0xC1, dlc=60, is_extended_id=False, is_fd=True,
+                          data=msg1_fd_data)
+    bus2_fd.send(msg1_fd)
+    
+    # CAN FD msg 2 - Bus 2
+    msg2_fd_data = CAN_bytes[88:88+9]
+    msg2_fd = can.Message(arbitration_id=0xC2, #dlc=64,
+                          is_extended_id=True, #is_fd=False,
+                          data=msg2_fd_data)
+    bus2_fd.send(msg2_fd)
 
     dt_data_received.append((time.time() - start_time_data_received) * 1000)
     print((time.time() - start_time_data_received)*1e6, 'nano seconds')
